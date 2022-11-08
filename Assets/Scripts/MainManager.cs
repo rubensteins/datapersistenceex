@@ -12,12 +12,13 @@ public class MainManager : MonoBehaviour
 
     public Text ScoreText;
     public GameObject GameOverText;
+    public Text HighScoreText;
     
     private bool m_Started = false;
     private int m_Points;
     
     private bool m_GameOver = false;
-
+    private string PlayerName;
     
     // Start is called before the first frame update
     void Start()
@@ -36,8 +37,42 @@ public class MainManager : MonoBehaviour
                 brick.onDestroyed.AddListener(AddPoint);
             }
         }
+
+        if (DataManager.Instance != null)
+        {
+            PlayerName = DataManager.Instance.PlayerName;
+        }
+        else
+        {
+            PlayerName = string.Empty;
+        }
+        AddPoint(0);
+        SetHighScoreText();
     }
 
+    private void StoreHighScore()
+    {
+        if (DataManager.Instance != null)
+        {
+            DataManager.Instance.HighScore = m_Points;
+            DataManager.Instance.HighScorePlayerName = PlayerName;
+        }
+
+        // Set Highscore text
+        SetHighScoreText();
+    }
+
+
+    private void SetHighScoreText()
+    {
+        if (DataManager.Instance != null)
+        {
+            string pName = DataManager.Instance.HighScorePlayerName;
+            int hsScore = DataManager.Instance.HighScore;
+            HighScoreText.text = $"Highscore by {pName}: {hsScore}";
+        }
+    }
+    
     private void Update()
     {
         if (!m_Started)
@@ -65,12 +100,16 @@ public class MainManager : MonoBehaviour
     void AddPoint(int point)
     {
         m_Points += point;
-        ScoreText.text = $"Score : {m_Points}";
+        ScoreText.text = $"Player : {PlayerName}  Score : {m_Points}";
     }
 
     public void GameOver()
     {
         m_GameOver = true;
         GameOverText.SetActive(true);
+        if (m_Points > DataManager.Instance.HighScore)
+        {
+            StoreHighScore();
+        }
     }
 }
