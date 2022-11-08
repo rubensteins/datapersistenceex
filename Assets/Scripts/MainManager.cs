@@ -60,6 +60,7 @@ public class MainManager : MonoBehaviour
 
         // Set Highscore text
         SetHighScoreText();
+        DataManager.Instance.Save();
     }
 
 

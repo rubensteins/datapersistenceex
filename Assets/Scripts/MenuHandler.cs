@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -16,8 +17,12 @@ public class MenuHandler : MonoBehaviour
     
     public void Quit()
     {
-        SaveName();
-        Application.Quit();
+        DataManager.Instance.Save();
+        #if UNITY_EDITOR
+                EditorApplication.ExitPlaymode();
+        #else
+                Application.Quit(); // original code to quit Unity player
+        #endif
     }
 
     private void SaveName()

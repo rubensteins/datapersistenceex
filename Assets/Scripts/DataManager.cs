@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.SocialPlatforms.Impl;
 
@@ -27,8 +28,22 @@ public class DataManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         FilePath = Application.persistentDataPath + "/SaveData.json";
+        Load();
     }
 
+    public void Load()
+    {
+        if (File.Exists(FilePath))
+        {
+            var text = File.ReadAllText(FilePath);
+            var data = JsonUtility.FromJson<SaveData>(text);
+            Debug.Log(text);
+
+            HighScore = data.HighScore;
+            HighScorePlayerName = data.HighScorePlayerName;
+        }
+    }
+    
     public void Save()
     {
         SaveData data = new SaveData();
@@ -36,6 +51,7 @@ public class DataManager : MonoBehaviour
         data.HighScore = HighScore;
         data.HighScorePlayerName = HighScorePlayerName;
         var json = JsonUtility.ToJson(data);
+        Debug.Log(json);
         File.WriteAllText(FilePath, json);
     }
     
